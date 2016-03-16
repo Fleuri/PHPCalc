@@ -1,6 +1,11 @@
 <?php
 
-
+if (!isset($_SESSION)) {
+    session_start();
+    if (!isset($_SESSION['history'])) {
+        $_SESSION['history']= array();
+    }
+}
 header("Content-type: text/html\n\n");
 ?>
 
@@ -12,7 +17,7 @@ header("Content-type: text/html\n\n");
     <body>
         <h1>
 
-
+<?php echo isset($_SESSION); ?>
 
         </h1>
         <form method="GET" name="form">
@@ -24,38 +29,26 @@ header("Content-type: text/html\n\n");
                 <option value="/">/</option>
             </select>
             <input type="text" name="arg2">
-            
-                <?php
-            if (isset($_GET['history'])) {
-                $history[] = $_GET['history'];
-            } else {
-                $history[] = array();
-            }
-            
-            foreach ($history as $value) {
-            ?>
-            <input type="hidden" name="history[]" value="<?php echo $value?>">
-            <?php
-            }
-            ?>
             <input type="submit" name="go" value="SUBMIT"></input>
         </form>
 
         <?php
         if (isset($_GET["go"])) {
             require_once 'logic.php';
-             
-            }
+        }
         ?>
 
         <h2>Equation history</h2>
-        <textarea name="History" rows=20 cols="50">
+        <p>
             <?php
-            foreach ($history as $value) {
-                echo $value;
+           
+            $arr = $_SESSION['history'];
+            foreach ($arr as $value) {
+              echo $value;
+              echo "<br>";
             }
             ?>
-        </textarea>
+        </p>
 
     </body>
 </html>
