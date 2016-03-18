@@ -1,18 +1,14 @@
 <?php
+exec('rm testfile.txt');
 $x = -pi();
 $arr = array();
 while ($x <= pi()) {
-    $arr[count($arr)] = sin(deg2rad($x));
+    $arr[count($arr)] = sin($x);
     $x += 0.1;
     }
     foreach($arr as $value) {
-      echo $value;
-      echo "\n";
+        file_put_contents("testfile.txt", $value, FILE_APPEND);
+        file_put_contents("testfile.txt", "\n", FILE_APPEND);
     };
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+    exec('gnuplot -e "filename=\'testfile.txt\'" foo.plg');
+    exec('chmod a+r output.png');
