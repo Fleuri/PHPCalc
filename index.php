@@ -30,7 +30,8 @@ header("Content-type: text/html\n\n");
         </form>
         <input type="button" id="sin" value="sin(x) (Serverside)"/>
         <input type="button" id="sinloc" value="sin(x) (Clientside)"/><br>
-        <input type="button" id="sinmixed" value="sin(x) (Mixed)"/><br>
+        <input type="button" id="sinmixed" value="sin(x) (Mixed)"/>
+        <input type="button" id='clearimages' value='Clear pictures'/><br>
         Cache size<input type="range" default="0" min="0" max="50" id="cache" value="0" step="1" onchange="showValue(this.value)" />
         <input style="width: 30px;" id="range" type="text" value="0" readonly/><br>
 
@@ -38,6 +39,14 @@ header("Content-type: text/html\n\n");
             function showValue(newValue) {
                 $("#range").attr("value", newValue);
             }
+            
+            $("#clearimages").click(function () {
+               var canvas = document.getElementById("myCanvas");
+               var ctx = canvas.getContext("2d");
+               ctx.clearRect(0, 0, canvas.width, canvas.height);
+               $("#myCanvas").attr('hidden', true);
+               $("#img").attr('src', "");
+            });
         </script> 
 
         <img src="" id="img">
