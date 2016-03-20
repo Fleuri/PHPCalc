@@ -109,6 +109,7 @@ header("Content-type: text/html\n\n");
                     ctx.moveTo(180, 0);
                     ctx.lineTo(180, 360);
                     ctx.stroke();
+                    ctx.strokeStyle="#00FF00";
 
                     var x = 0, y = 180;
                     var mover = -Math.PI;
