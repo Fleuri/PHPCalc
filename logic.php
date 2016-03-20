@@ -1,4 +1,5 @@
 <?php
+// AUTHOR: Lauri Suomalainen, 013791364
 {
 $arg1 = $_GET["arg1"];
 $arg2 = $_GET["arg2"];

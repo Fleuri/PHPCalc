@@ -1,4 +1,5 @@
 <?php
+// AUTHOR: Lauri Suomalainen, 013791364
 exec('rm testfile.txt'); // No cheating!
 $x = -pi();
 $arr = array();

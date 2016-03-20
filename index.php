@@ -1,7 +1,8 @@
 <?php
+// AUTHOR: Lauri Suomalainen, 013791364
 //if (!isset($_SESSION)) {
 //    session_start();
-//    if (!isset($_SESSION['history'])) {
+//       if (!isset($_SESSION['history'])) {
 //        $_SESSION['history'] = array();
 //    }
 //}
