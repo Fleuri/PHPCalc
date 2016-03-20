@@ -1,10 +1,10 @@
 <?php
-if (!isset($_SESSION)) {
-    session_start();
-    if (!isset($_SESSION['history'])) {
-        $_SESSION['history'] = array();
-    }
-}
+//if (!isset($_SESSION)) {
+//    session_start();
+//    if (!isset($_SESSION['history'])) {
+//        $_SESSION['history'] = array();
+//    }
+//}
 require_once 'logic.php';
 //require 'sin.php';
 header("Content-type: text/html\n\n");
@@ -36,10 +36,11 @@ header("Content-type: text/html\n\n");
         <input style="width: 30px;" id="range" type="text" value="0" readonly/><br>
 
         <script>
+            //Function for updating the value display for cache.
             function showValue(newValue) {
                 $("#range").attr("value", newValue);
             }
-            
+            // Function for clearing the sine plotting images
             $("#clearimages").click(function () {
                var canvas = document.getElementById("myCanvas");
                var ctx = canvas.getContext("2d");
@@ -54,17 +55,18 @@ header("Content-type: text/html\n\n");
         <p id="test"><p>
 
             <script>
+                // Function for calculator
                 $("#go").click(function () {
                     $("#test").text($("#arg1").val());
                     var exp = $("#test").text();
                     $('#test').empty();
-                    exp = exp.match(/[^\d()]+|[\d.]+/g);
-                    exp.reverse();
+                    exp = exp.match(/[^\d()]+|[\d.]+/g); // Tokenize the values and operators
+                    exp.reverse(); //reverse for stack
                     var stack = [];
                     exp.forEach(function (entry) {
-                        stack.push(entry);
+                        stack.push(entry); //Build a stack
                     });
-                    while (stack.length > 1) {
+                    while (stack.length > 1) { // Go through the stack calculating.
                         console.log(stack);
                         var arg1 = stack.pop();
                         var op = stack.pop();
@@ -78,9 +80,9 @@ header("Content-type: text/html\n\n");
                                 arg2: arg2
                             },
                             complete: function (response) {
-                                stack.push(response.responseText);
-                                $('#test').html(response.responseText);
-                                $('#history').append("" + arg1 + " " + op + " " + arg2 + "=" + response.responseText + "<br>");
+                                stack.push(response.responseText); //Push the new value to stack
+                                $('#test').html(response.responseText); 
+                                $('#history').append("" + arg1 + " " + op + " " + arg2 + "=" + response.responseText + "<br>"); //Update calculation history
                             },
                             error: function () {
                                 $('#test').html('Bummer: there was an error!');
@@ -91,6 +93,7 @@ header("Content-type: text/html\n\n");
             </script>
 
             <script>
+                //Call the sine plotting server side function and display the image.
                 $("#sin").click(function () {
                     $.ajax({
                         type: "GET",
@@ -109,6 +112,7 @@ header("Content-type: text/html\n\n");
             </script>
 
             <script>
+                // Calculate the sine locally
                 $("#sinloc").click(function () {
                     $("#myCanvas").attr('hidden', false);
                     var canvas = document.getElementById("myCanvas");
@@ -135,6 +139,7 @@ header("Content-type: text/html\n\n");
             </script>
 
             <script>
+                // Calculate the sine mixed. Every atomic operation is calculated with the calculate() function.
                 $("#sinmixed").click(function () {
                     var cacheSize = $("#range").attr("value");
                     var queue = [];
@@ -161,7 +166,7 @@ header("Content-type: text/html\n\n");
                         var tmp2 = $("#test").html();
                         calculate(tmp, "/", tmp2);
                         tmp = $("#test").html();
-                        calculate(resultvalue, "-", tmp);
+                        calculate(resultvalue, "-", tmp); //x-(x³/3!)
                         resultvalue = $("#test").html();
                         //x⁵/5!
                         calculate(mover, "*", mover);
@@ -175,7 +180,7 @@ header("Content-type: text/html\n\n");
                         tmp2 = $("#test").html();
                         calculate(tmp, "/", tmp2);
                         tmp = $("#test").html();
-                        calculate(resultvalue, "+", tmp);
+                        calculate(resultvalue, "+", tmp); //x-(x³/3!)+x⁵/5!
                         resultvalue = $("#test").html();
                         //x^7/7!
                         calculate(mover, "*", mover);
@@ -193,23 +198,24 @@ header("Content-type: text/html\n\n");
                         tmp2 = $("#test").html();
                         calculate(tmp, "/", tmp2);
                         tmp = $("#test").html();
-                        calculate(resultvalue, "-", tmp);
+                        calculate(resultvalue, "-", tmp); // x-(x³/3!)+x⁵/5!-x^7/7!
                         resultvalue = $("#test").html();
 
-                        calculate(resultvalue, "*", 120);
+                        calculate(resultvalue, "*", 120); //This multiplication is to make the sine wave bigger and nicer looking.
                         resultvalue = $("#test").html();
-                        calculate(180, "-", resultvalue);
+                        calculate(180, "-", resultvalue); //To make the y-axis the central point of drawing.
                         y = resultvalue = $("#test").html();
-                        calculate(x, "+", 5.7);
+                        calculate(x, "+", 5.7); //While drawing, 5.7 is the actual value to move forwards on the canvas.
                         x = resultvalue = $("#test").html();
                         ctx.lineTo(x, y);
                         ctx.stroke();
-                        calculate(mover, "+", 0.1);
+                        calculate(mover, "+", 0.1); //Increase the value of x by 0.1
                         mover = $("#test").html();
                     }
                     ;
 
                     function calculate(arg1, op, arg2) {
+                        // If cached value is found, it is returned instead of contacting the server
                         if (cacheSize !== 0 && "" + arg1 + op + arg2 in queue) {
                             $('#test').html(queue["" + arg1 + op + arg2]);
                             console.log("returned a cached value! Key" + arg1 + op + arg2 + "Value: " + queue["" + arg1 + op + arg2] );
@@ -226,10 +232,11 @@ header("Content-type: text/html\n\n");
                             complete: function (response) {
                                 console.log(response.responseText);
                                 $('#test').html(response.responseText);
+                                // Cache the value
                                 if (cacheSize !== 0) {
                                 queue.push("" + arg1 + op + arg2);
                                 queue["" + arg1 + op + arg2] = $('#test').html();
-                                if (queue.length > cacheSize) {
+                                if (queue.length > cacheSize) { // If cache is full, drop the oldest value
                                     console.log("CacheSize " + cacheSize + " exceeded! Shifting queue!")
                                     queue.shift();
                                 }
